@@ -1,0 +1,2 @@
+A vector might have more than one dimension value, or possible a "range" of a given dimension... possibly
+even a "fuzziness".. a centerpoint and then a max and min value.

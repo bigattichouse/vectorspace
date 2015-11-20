@@ -1,0 +1,115 @@
+#include "sockhelp.h"
+#include <ctype.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <time.h>
+#include <fcntl.h>
+#include "vs_core.h"
+#include "vs_list.h"
+#include "vs_queue.h"
+#include "vs_cursor.h"
+#include "vs_query.h"
+#include "vs_interpreter.h"
+#include "vs_thesaurus.h"
+#include "vs_modes.h"
+#include "vs_persist.h"
+#include "vs_cache_config.h"
+
+const _BUFFSIZE = 48;
+char buffer[_BUFFSIZE];
+
+ 
+vs_cursor *cursor,*thesaurus;
+
+int debug_mode;
+FILE 	*logfile;
+int sock;            /* The socket file descriptor for our "listening"
+                   	socket */
+const int TOTALSOCKS = 200;
+vs_connection connectlist[200];  /* Array of connected sockets so we know who
+	 		we are talking to */
+fd_set socks;        /* Socket file descriptors we want to wake
+			up for, using select() */
+int highsock;	     /* Highest #'d file descriptor, needed for select() */
+
+/* Our process ID and Session ID */
+pid_t pid, sid;
+
+
+
+ vs_queue *output_buffer;
+ interpreter_session session;
+
+void process_command (){
+ char *vectorid ;
+ float value;
+ char command;
+ int res;
+ t_uuid id;
+ vectorid=malloc(33);
+while ( fgets(buffer,_BUFFSIZE,stdin) != NULL ){
+  if (sscanf(buffer,"%c %32s %f\n",&command,vectorid,&value)==3){
+  if (command=='~'){
+           vp_save_cursor( cursor,(char *) __VSDB_CACHE_PATH);
+           vp_save_cursor( thesaurus,(char *) __THESAURUS_CACHE_PATH);
+  } else {
+    id = StringToHash(vectorid);
+    res = vsinterpreter_execute (cursor,thesaurus,session,command,id,value, output_buffer);
+    if(res == 2){ connection->closewhencomplete=1; };
+    
+    while ( vs_queue_size(connection->output_buffer)>0 ){
+      node = vs_queue_pop(connection->output_buffer);
+      printf("%s\n",node->buffer);
+    }
+  }
+ } else {
+    printf("Command Failed.");
+ }
+}
+ free(vectorid);
+ command=' ';
+ value=0.0;
+}
+
+
+#define BUFSIZE          32*1024-1
+
+int main (argc, argv)
+int argc;
+char *argv[];
+{
+  int i,writeable;
+  char *errpos;
+  vs_connection *connection;
+  vs_queuenode *node;
+        int bufsize;
+	char *ascport;  /* ASCII version of the server port */
+	char *cachedir;
+	int port;       /* The port number after conversion from ascport */
+	struct sockaddr_in server_address; /* bind info structure */
+	int reuse_addr = 1;  /* Used so we can re-bind to our port
+				while a previous connection is still
+				in TIME_WAIT state. */
+	struct timeval timeout;  /* Timeout for select */
+	int readsocks;	     /* Number of sockets ready for reading */
+
+        fprintf(logfile,"# VSDB Start\n"); fflush(logfile);
+
+      __VSDB_CACHE_PATH = (char *)malloc(1024);
+      strcat(__VSDB_CACHE_PATH,cachedir);
+      strcat(__VSDB_CACHE_PATH,"vsdb.dat");
+
+      __THESAURUS_CACHE_PATH = (char *)malloc(1024);
+      strcat(__THESAURUS_CACHE_PATH,cachedir);
+      strcat(__THESAURUS_CACHE_PATH,"thesaurus.dat");
+
+      vp_load_cursor( cursor,(char *) __VSDB_CACHE_PATH);
+      vp_load_cursor( thesaurus,(char *)__THESAURUS_CACHE_PATH);
+
+
+} /*while active*/
+  exit(EXIT_SUCCESS);
+} /*main*/
+
+

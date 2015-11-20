@@ -1,0 +1,14 @@
+echo "vsdbd"
+
+cd src/
+
+gcc -pg -g3 -O0 -s -Wall -Isrc/  uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+  vs_cursor.c vs_cursorindex.c vs_indexrowset.c vs_cache.c vs_rowset.c vs_query.c sockhelp.c vs_queue.c \
+ vs_thesaurus.c vs_persist.c vs_interpreter.c vs_normalize.c vs_cluster.c vsdbd.c -ldl -o ../bin/vsdbd -lm
+
+echo "vsdb_cli"
+
+gcc -pg -g3 -O0 -s -Wall -Isrc/  uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+  vs_cursor.c vs_cursorindex.c vs_indexrowset.c vs_cache.c vs_rowset.c vs_query.c sockhelp.c vs_queue.c \
+ vs_thesaurus.c vs_persist.c vs_interpreter.c vs_normalize.c vs_cluster.c vsdb_cli.c -ldl -o ../bin/vsdb_cli -lm
+

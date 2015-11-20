@@ -1,0 +1,33 @@
+initial version - discrete queries against three files
+later - a running server .. started with the bliss and memory, then just keep feeding in the now.
+
+[entity].bliss file describes the vectors/states that define bliss.
+
+so, a single vector.
+
+
+[entity].memory file which contains the memory structure for this entity
+
+memory
+  stories
+    vectors
+
+
+[entity].now contains the current scanned "Now"
+
+a single vector... gets fed back into the system.
+
+
+So, for testing with a web client, I can just pass in the three and read the output.
+
+Output:
+
+new "now"
+new "now" bliss score
+output vector containing the resulting action.
+
+Doing it this way, we can have one CPU service lots of file groups... (or multiple cpus) just pass a directory and an entity id.. and it will process.
+
+
+
+

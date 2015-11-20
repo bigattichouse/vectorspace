@@ -1,0 +1,7 @@
+Subtype L (Lock Token) ...
+This is a dimension that is REQUIRED for the vector to show.  if the vector
+doesn't have a match on that dimension, then its no good.
+This allows setting group and user access on vectors.
+
+
+

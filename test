@@ -1,0 +1,109 @@
+date
+echo "compiling"
+#gcc uuid.c testuuid.c -o testuuid -Wall -ldl
+#./testuuid
+
+#gcc -g3 -Wall -O3 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c test_merge.c  -ldl -o testmerge -lm -pg
+#./testmerge
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c  vs_interpreter.c vs_rowset.c vs_cluster.c test_denoise.c  -ldl -o testnoise -lm -pg
+#./testnoise
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c test_cluster.c -ldl -o testcluster -lm -pg
+# ./testcluster
+
+# gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c test_cluster2.c -ldl -o testcluster2 -lm -pg
+# ./testcluster2
+
+# gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vsdb_sdk.c test_cluster3.c -ldl -o testcluster3 -lm -pg
+# ./testcluster3
+
+#echo "compiling"
+# gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+#  vs_cursor.c  vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vsdb_sdk.c test_cluster3.c -ldl -o testcluster3 -lm -pg
+#date
+#echo "executing"
+#./testcluster3
+
+
+# gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+#  vs_cursor.c  vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vsdb_sdk.c test_cluster4.c -ldl -o testcluster4 -lm -pg
+#date
+#echo "executing"
+#./testcluster4
+
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c test_thesaurus.c -ldl -o testthesaurus -lm -pg
+#./testthesaurus
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vs_cursorindex.c vs_indexrowset.c test_persist.c -ldl -o #testpersist -lm -pg
+#./testpersist
+
+
+#gcc -g3 -Wall -O3 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c test_core2.c -ldl -o testcore2 -lm -pg
+#./testcore2
+
+
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vs_cursorindex.c vs_indexrowset.c test_cursor_index.c -ldl -o testcursorindex -lm -pg
+#./testcursorindex
+
+#rm ./testdisk
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c\
+# vs_cursorindex.c vs_indexrowset.c vs_disc_index.c vs_disc_data.c vs_disc_dimensions.c vs_disc_interface.c test_disc_interface.c -ldl -o testdisk -lm -pg
+#./testdisk
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c\
+# vs_cursorindex.c vs_indexrowset.c arc_moment.c test_arc_moment.c -ldl -o test_arc_moment -lm -pg
+#./test_arc_moment
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c\
+# vs_cursorindex.c vs_indexrowset.c arc_moment.c arc_story.c test_arc_story.c -ldl -o test_arc_story -lm -pg
+#./test_arc_story
+
+
+gcc -pg -g3 -O0 -s -Wall uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+ vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+ vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_normalize.c vs_cluster.c vs_persist.c\
+ vs_cursorindex.c vs_indexrowset.c arc_moment.c arc_story.c arc_memory.c simulate_entity.c -ldl -o simulate_entity -lm -pthread
+./simulate_entity
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_cluster.c vs_persist.c vs_cursorindex.c vs_indexrowset.c test_broken.c -ldl -o testbroken -lm -pg
+#./testbroken
+
+
+#gcc -g3 -Wall -O0 uuid.c vs_dimensionindex.c vs_core.c vs_list.c \
+# vs_cursor.c vs_cache.c vs_query.c sockhelp.c vs_queue.c \
+# vs_thesaurus.c vs_interpreter.c vs_rowset.c vs_normalize.c vs_cluster.c vs_persist.c vs_cursorindex.c vs_indexrowset.c #vs_idf.c test_idf.c -ldl -o testidf -lm -pg
+#./testidf
+
+
+date
