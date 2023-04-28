@@ -31,6 +31,8 @@ typedef struct {
 
 t_uuid newid();
 vector *vs_createvector (t_uuid vectorid,long dimensioncount);
+long vs_rawfinddimension (vector *v, t_uuid dimensionid);
+long vs_finddimension (vector *v, t_uuid dimensionid);
 long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value);
 void vs_quickset (vector *v, t_uuid dimensionid,float floatvalue);
 long vs_appendvalue (vector *v, t_uuid dimensionid,vs_value value); //if you know we don't have the dim already

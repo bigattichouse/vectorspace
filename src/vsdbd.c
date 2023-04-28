@@ -146,7 +146,7 @@ void deal_with_data( int listnum) {
     int sz ;
     int holdbuff;
     connection = &connectlist[listnum];
-   
+
     buff = (char *)(connection->buffer);
     buff += connection->bufferpos;
     sz = read (connection->sock,buff,(47-(connection->bufferpos)));
@@ -273,8 +273,8 @@ char *argv[];
 	struct timeval timeout;  /* Timeout for select */
 	int readsocks;	     /* Number of sockets ready for reading */
 
-     debug_mode=0; daemonize_process();
-//       open_logfile();   debug_mode=1;
+     debug_mode=0; //daemonize_process();
+       open_logfile();   debug_mode=1;
 
         fprintf(logfile,"Preparing Server\n"); fflush(logfile);
 	/* Make sure we got a port number as a parameter */
@@ -378,7 +378,7 @@ if (debug_mode==1){fprintf(logfile,"Loading Cache from %s...\r\n",cachedir); ffl
 
 if (debug_mode==1){fprintf(logfile,"Loaded %d Vectors, creating main cursor index\r\n",(int)cursor->count); fflush(logfile);}
 
- 
+
 
 
 if (debug_mode==1){fprintf(logfile,"Done. Ready.\r\n" ); fflush(logfile);}
@@ -400,8 +400,8 @@ if (debug_mode==1){fprintf(logfile,"Done. Ready.\r\n" ); fflush(logfile);}
 			exit(EXIT_FAILURE);
 		}
 
-  	        if (readsocks > 0) { 
-                     read_socks(); 
+  	        if (readsocks > 0) {
+                     read_socks();
                      }
 
 
@@ -437,5 +437,3 @@ for (i=0;i<TOTALSOCKS;i++){
 } /*while active*/
   exit(EXIT_SUCCESS);
 } /*main*/
-
-

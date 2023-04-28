@@ -19,7 +19,7 @@
 const int _BUFFSIZE = 48;
 char buffer[48];
 
- 
+
  vs_cursor *cursor,*thesaurus;
  vs_queue *output_buffer;
  interpreter_session session;
@@ -39,6 +39,7 @@ while (fgets(buffer,_BUFFSIZE,stdin) != NULL ){
            vp_save_cursor( thesaurus,(char *) __THESAURUS_CACHE_PATH);
   } else {
     id = StringToHash(vectorid);
+
     res = vsinterpreter_execute (cursor,thesaurus,&session,command,id,value,output_buffer);
     while ( vs_queue_size(output_buffer)>0 ){
       node = vs_queue_pop(output_buffer);
@@ -64,12 +65,16 @@ int main (argc, argv)
 int argc;
 char *argv[];
 {
-	char *cachedir;        
+    printf("# VSDB Start\n");
+
+	char *cachedir;
 	if (argc>1){
           cachedir = argv[1];
         }
 
-        printf("# VSDB Start\n");
+
+               cursor = vsc_createcursor();
+               thesaurus = vsc_createcursor();
 
       __VSDB_CACHE_PATH = (char *)malloc(1024);
       strcat(__VSDB_CACHE_PATH,cachedir);
@@ -81,8 +86,13 @@ char *argv[];
 
       vp_load_cursor( cursor,(char *) __VSDB_CACHE_PATH);
       vp_load_cursor( thesaurus,(char *)__THESAURUS_CACHE_PATH);
+
+
+       output_buffer = vs_prepare_queue();
+      session.mode = RAW_VECTOR_MODE;
+      session.thesaurus = 0.45;
+
       process_command ();
-      exit(EXIT_SUCCESS);      
+
+      exit(EXIT_SUCCESS);
 } /*main*/
-
-

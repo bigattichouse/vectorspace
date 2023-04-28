@@ -1,4 +1,4 @@
-<?
+<?php
 global $conn;
 
 function padfloat ($value){
@@ -45,6 +45,7 @@ function SendVsdb($msg){
 
 function ReadVsdb(){
  global $conn;
+ $results = "";
  while ($out = socket_read($conn, 2048)) {
   $results .= $out;   }
  return($results);
@@ -54,7 +55,7 @@ function QueryVsdb ( $docid,$dimarray,$threshold){
  global $conn;
  $msg = MSG_Query("Q",$docid,sizeof($dimarray));
  SendVsdb($msg);
- while (list($key, $value) = each($dimarray)) {
+ foreach($dimarray as $key=>$value){
     $msg = MSG_Query("D",$key,$value);
     SendVsdb($msg);
  }
@@ -65,13 +66,13 @@ function QueryVsdb ( $docid,$dimarray,$threshold){
  return ($results);
 }
 
-function UpdateVsdb (  $docid,$dimarray){  
+function UpdateVsdb (  $docid,$dimarray){
  global $conn;
  //update a vector in the db
  //assume we used my stemmer php stuff to handle the stemming, and have our array of key->value pairs
  $msg = MSG_Query("V",$docid,sizeof($dimarray));
  SendVsdb($msg);
- while (list($key, $value) = each($dimarray)) {
+ foreach($dimarray as $key=>$value){
     $msg = MSG_Query("D",$key,$value);
      SendVsdb($msg);
  }
