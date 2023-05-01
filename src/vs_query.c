@@ -76,7 +76,7 @@ long vsdb_query(t_uuid sessionid,vs_cursor *cursor,vector *query,float threshold
    if (dbcos>threshold){
       did = HashToString(v->vectorid);
       outbuff = malloc(512);
-      sz = sprintf(outbuff, "R %s %f %f %f\r\n",did,magd,dp,dbcos);      
+      sz = sprintf(outbuff, "R %s %f %f %f\r\n",did,magd,dp,dbcos);
       outbuff[sz]=0;
       vs_queue_push(queue,outbuff,sz,sessionid);
       count++;

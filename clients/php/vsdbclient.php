@@ -85,6 +85,10 @@ function RefreshVsdb( ){
  SendVsdb(MSG_Query("R","00000000000000000000000000000000",0));
 }
 
+function AddRawDimension(&$vector,$term,$value){
+ $vector[md5($term)]=$value;
+}
+
 function AddClassDimension(&$vector,$term,$value){
  $vector[md5("CLASS_" . $term)]=$value;
 }

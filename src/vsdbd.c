@@ -52,13 +52,20 @@ void process_command (vs_connection *connection){
  int res;
  t_uuid id;
  vectorid=malloc(33);
+
+/*
+ TODO!!!   AFter a Query runs, the cursor is blank? The next query will only return 0
+ even if we are updating/inserting new records
+ seems separate connections are ok, but multiple queries on one session?
+*/
+
  if (sscanf(connection->buffer,"%c %32s %f\r\n",&command,vectorid,&value)==3){
   if (command=='~'){
            vp_save_cursor( cursor,(char *) __VSDB_CACHE_PATH);
            vp_save_cursor( thesaurus,(char *) __THESAURUS_CACHE_PATH);
   } else {
     id = StringToHash(vectorid);
-    res = vsinterpreter_execute (cursor,thesaurus,&connection->session,command,id,value, connection->output_buffer);
+    res = vsinterpreter_execute (cursor,thesaurus,&connection->session,command,id,value, connection->output_buffer, logfile);
     if(res == 2){ connection->closewhencomplete=1; };
   }
 
@@ -274,7 +281,7 @@ char *argv[];
 	int readsocks;	     /* Number of sockets ready for reading */
 
      debug_mode=0; //daemonize_process();
-       open_logfile();   debug_mode=1;
+       open_logfile();  // debug_mode=1;
 
         fprintf(logfile,"Preparing Server\n"); fflush(logfile);
 	/* Make sure we got a port number as a parameter */

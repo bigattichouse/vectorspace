@@ -14,7 +14,7 @@
 #include "vs_persist.h"
 
 
-int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_session *session, char command, t_uuid elementid,float value, vs_queue *output_buffer ){
+int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_session *session, char command, t_uuid elementid,float value, vs_queue *output_buffer , FILE 	*logfile){
   vs_value val;
   vs_cursor *cluster;
   vector *temp;
@@ -57,16 +57,16 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
              session->vectorcount+=1;
             if (session->vectorcount==session->current_vector->dimensioncount){
               if (session->command=='V'){
-                                        	
+
                  if (session->mode==CLASSIFIED_VECTOR_MODE){
                    vst_classify_vector(session->current_vector,thesaurus,session->thesaurus);
                  }
-                 
+
                  if (session->mode==META_VECTOR_MODE){
                    temp = vst_metavector(session->current_vector,thesaurus,session->thesaurus);
                    vs_destroyvector(&session->current_vector);
                    session->current_vector = temp;
-                 }                                
+                 }
 
                  vsc_replacevector(cursor,session->current_vector);
                  vs_destroyvector(&session->current_vector);
@@ -89,7 +89,7 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
                  if (session->mode==CLASSIFIED_VECTOR_MODE){
                    vst_classify_vector(session->current_vector,thesaurus,session->thesaurus);
                  }
-                 
+
                  if (session->mode==META_VECTOR_MODE){
                    temp = vst_metavector(session->current_vector,thesaurus,session->thesaurus);
                    vs_destroyvector(&session->current_vector);
@@ -105,12 +105,15 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
                  if (session->mode==CLASSIFIED_VECTOR_MODE){
                    vst_classify_vector(session->current_vector,thesaurus,session->thesaurus);
                  }
-                 
+
                  if (session->mode==META_VECTOR_MODE){
                    temp = vst_metavector(session->current_vector,thesaurus,session->thesaurus);
                    vs_destroyvector(&session->current_vector);
                    session->current_vector = temp;
                  }
+
+     if (logfile) { fprintf(logfile,"Querying Threshold %f\n",value); fflush(logfile); }
+
       vsdb_query(session->id,cursor,session->current_vector,value,output_buffer);
       vs_destroyvector(&session->current_vector);
       result = 2;
@@ -120,14 +123,14 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
       did = HashToString(elementid);  // XXXXXXXXXXYYYYYYYYYYZZZZZZZZZZAA
       //min = atoi(did);
       cCX = malloc(10);       cCY = malloc(10);       cCZ = malloc(10); cCA = malloc(2);
-      sscanf(did,"%10s%10s%10s%2s",cCX,cCY,cCZ,cCA); 
-      CX = atoi(cCX);      CY = atoi(cCY);      CZ = atoi(cCZ);   
+      sscanf(did,"%10s%10s%10s%2s",cCX,cCY,cCZ,cCA);
+      CX = atoi(cCX);      CY = atoi(cCY);      CZ = atoi(cCZ);
       free(did);                        //X          Y           Z
     //  cluster = vsc_vector_cluster(cursor,CX,CY,value,CZ);
     //  vsdb_outputcursor(session->id,cluster,output_buffer);
     //  vsc_destroycursor(&cluster);
     //  result = 1;
- 
+
  // cluster = vsc_vector_metacluster(cursor,CX,CY,value,CZ);
   cluster = vsc_vector_cluster(cursor,CX,CY,value,CZ);
   vsdb_outputcursor(session->id,cluster,output_buffer);
@@ -145,16 +148,16 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
       vsc_destroycursor(&cluster);
       result = 1;
   }
-  
+
   if (command=='S'){
      //used by the persistor to dump the contents of the cursor
      //persistor then reloads everything using standard V commands.
       vsdb_outputcursor(session->id,cursor,output_buffer);
       result = 1;
   }
-  
 
-  
+
+
 
 
 

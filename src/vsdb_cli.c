@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "sockhelp.h"
 #include <ctype.h>
 #include <sys/stat.h>
@@ -40,7 +41,7 @@ while (fgets(buffer,_BUFFSIZE,stdin) != NULL ){
   } else {
     id = StringToHash(vectorid);
 
-    res = vsinterpreter_execute (cursor,thesaurus,&session,command,id,value,output_buffer);
+    res = vsinterpreter_execute (cursor,thesaurus,&session,command,id,value,output_buffer,stdout);
     while ( vs_queue_size(output_buffer)>0 ){
       node = vs_queue_pop(output_buffer);
       printf("%s\n",node->buffer);
