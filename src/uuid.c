@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <openssl/evp.h>
 #include "port.h"
 #include "uuid.h"
 
@@ -26,7 +27,22 @@ typedef struct  {
     uint    D5;
 } c_uuid;
 
-
+char *char_to_md5(const char *data, int len) {
+    // Based on https://www.openssl.org/docs/manmaster/man3/EVP_DigestUpdate.html
+    char *md5buf = malloc(33);
+    EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+    const EVP_MD *md = EVP_md5();
+    unsigned char md_value[EVP_MAX_MD_SIZE];
+    unsigned int md_len, i;
+    EVP_DigestInit_ex(mdctx, md, NULL);
+    EVP_DigestUpdate(mdctx, data, len);
+    EVP_DigestFinal_ex(mdctx, md_value, &md_len);
+    EVP_MD_CTX_free(mdctx);
+    for (i = 0; i < md_len; i++) {
+      snprintf(&(md5buf[i * 2]), 16 * 2, "%02x", md_value[i]);
+    }
+    return md5buf;
+}
 
 int IsNullGuid(t_uuid *guid){
   c_uuid *CMP;
@@ -53,6 +69,7 @@ t_uuid NullGuid(){
 
 int CreateGUID(t_uuid *guid) {
   c_uuid *CMP;
+  int read_bytes;
 #ifdef WIN32
   //windows uses built in GUID generation
 #else
@@ -83,14 +100,17 @@ int CreateGUID(t_uuid *guid) {
         exit(1);
     }
     uuid_generate_time(guid);
-*/      
+*/
+    read_bytes = 0;
 	fd = open("/dev/urandom", O_RDONLY, 0); //
 	if(fd >= 0)
 	{
-		read(fd, guid, 16);
+		read_bytes = read(fd, guid, 16);
 		close(fd);
 	}
-
+    if(read_bytes==0){
+        return(0);
+    }
 //    dlclose(libuuidhandle);
 #endif
    return(0);
@@ -187,7 +207,7 @@ char *GuidToString(t_uuid GUID){
  c2 =GUID.D4[2];c6 =GUID.D4[6];
  c3 =GUID.D4[3];c7 =GUID.D4[7];
 
- result = malloc(38);
+ result = malloc(39);
  sprintf(result,"{%.8x-%.4x-%.4x-%02x%02x-%02x%02x%02x%02x%02x%02x}",   // do not localize
     GUID.D1, GUID.D2, GUID.D3, c0,c1,c2,c3,c4,c5,c6,c7) ;
  return(result);
@@ -222,4 +242,3 @@ t_uuid StringToHash(char *HASH){
  free(result);
  return(GUID);
 }
-
