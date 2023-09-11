@@ -316,7 +316,7 @@ char *argv[];
         }
 
 	/* Set socket to non-blocking with our setnonblocking routine */
-	setnonblocking(sock);
+	//setnonblocking(sock);
 if (debug_mode==1){  fprintf(logfile,"Reading CLI args!\n"); fflush(logfile);}
 	/* Get the address information, and bind it to the socket */
  	ascport = argv[1]; /* Read what the user gave us */
@@ -374,6 +374,10 @@ if (debug_mode==1){fprintf(logfile,"Reloading Cache...\n"); fflush(logfile);}
       strcat(__VSDB_CACHE_PATH,cachedir);
       strcat(__VSDB_CACHE_PATH,"vsdb.dat");
 
+      __VSDB_DYNAMIC_CACHE_PATH = (char *)malloc(1024);
+      strcat(__VSDB_DYNAMIC_CACHE_PATH,cachedir);
+      strcat(__VSDB_DYNAMIC_CACHE_PATH,"vsdb.do");
+
       __THESAURUS_CACHE_PATH = (char *)malloc(1024);
       strcat(__THESAURUS_CACHE_PATH,cachedir);
       strcat(__THESAURUS_CACHE_PATH,"thesaurus.dat");
@@ -382,6 +386,10 @@ if (debug_mode==1){fprintf(logfile,"Loading Cache from %s...\r\n",cachedir); ffl
 
       vp_load_cursor( cursor,(char *) __VSDB_CACHE_PATH);
       vp_load_cursor( thesaurus,(char *)__THESAURUS_CACHE_PATH);
+
+if (debug_mode==1){fprintf(logfile,"Loading Compiled Cache from %s\r\n",cachedir); fflush(logfile);}
+
+      vsdl_load ( cursor, (char *) __VSDB_DYNAMIC_CACHE_PATH )
 
 if (debug_mode==1){fprintf(logfile,"Loaded %d Vectors, creating main cursor index\r\n",(int)cursor->count); fflush(logfile);}
 
@@ -399,7 +407,7 @@ if (debug_mode==1){fprintf(logfile,"Done. Ready.\r\n" ); fflush(logfile);}
 
 		build_select_list();
 		timeout.tv_sec = 0;
-		timeout.tv_usec = 50;
+		timeout.tv_usec = 75;
 		readsocks = select(highsock+1, &socks, (fd_set *) 0,
 		  (fd_set *) 0, &timeout);
 		if (readsocks < 0) {

@@ -54,7 +54,7 @@ inline long vs_rawfinddimension (vector *v, t_uuid dimensionid){
     dim = (dimension *)(val);
     if (dim!=NULL){
       d = dim->dimensionid;
-      if (IsEqualGuid(d,dimensionid)==1){idx=i; i=max;}
+      if (IsEqualGuid(d,dimensionid)==1){idx=i; i=max; return idx;}
     }
     i++;
  }
@@ -62,7 +62,7 @@ inline long vs_rawfinddimension (vector *v, t_uuid dimensionid){
 }
 
 inline long vs_finddimension (vector *v, t_uuid dimensionid){
- if (v->index!=NULL){ 
+ if (v->index!=NULL){
    return(__vdim_find(v,dimensionid));
   } else {
    return(vs_rawfinddimension(v,dimensionid));
@@ -91,8 +91,9 @@ long vs_findemptydimension (vector *v, t_uuid dimensionid){
  for (i=0;i<max;i++){
     val = (long)dims + (long)(i * sizeof(dimension));
     dim = (dimension *)(val);
-    if (dim->dimensiontype==0){idx=i; i=max;
-  }
+    if (dim->dimensiontype==0){
+        idx=i; i=max; return(idx);
+    }
  }
  return(idx);
 }
@@ -102,7 +103,7 @@ long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
  dimension *dim,*dims,*redims;
  result =0;
  idx = vs_finddimension(v,dimensionid);
- 
+
  dims = v->dimensions;
  if (idx==-1){
     blankidx = vs_findemptydimension(v,dimensionid);
@@ -139,15 +140,15 @@ long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
     dim = (dimension *)(val);
 /*      printf("EXIST:%s=%f\n",GuidToString(dimensionid),value.floatvalue);*/
       dim->dimensiontype=1;
-      dim->value = value; 
+      dim->value = value;
       result=1;
   }
-  
+
  return(result);
 }
 
 void vs_quickset (vector *v, t_uuid dimensionid,float floatvalue){
- vs_value val; 
+ vs_value val;
  val.floatvalue = floatvalue;
  vs_setvalue (v,dimensionid,val);
 }
@@ -191,9 +192,9 @@ long vs_setvaluebyindex (vector *v,long idx,t_uuid dimensionid,vs_value value){
  dim = (dimension *)(val);
 
   dim->dimensiontype=1;
-  dim->value = value; 
+  dim->value = value;
   result=idx;
-  
+
 
  return(result);
 }
@@ -255,7 +256,7 @@ float vs_magnitude(vector *v){
  long max,i;
  float vv,result;
  dimension dim;
- 
+
  if (v!=NULL){
  max = v->dimensioncount;
  result=0;
@@ -294,7 +295,7 @@ float vs_dotproduct(vector *a,vector *b){
  }
  return(result);
 }
- 
+
 
 float vs_cosine(vector *a,vector *b){
  float m1,m2,mt,dp,result;

@@ -14,7 +14,7 @@ typedef struct
 } vs_value;
 
 typedef struct {
-  t_uuid vectorid;
+  t_uuid vectorid;  //TODO: <<< IS THIS NEEDED? kinda wasting memory
   t_uuid dimensionid;
   long dimensiontype;
   vs_value value;
