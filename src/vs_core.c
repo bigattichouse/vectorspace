@@ -472,4 +472,52 @@ void vs_modifydimension( vector *v, t_uuid id, float modifier){
   }
 }
 
+dimension *vs_lowest_dimension( vector *v){
+  char *did;
+  long count,i;
+  float bestScore = 99999; 
+  dimension *dim, *bestDim;
+  t_uuid id;
+    bestDim=NULL;
+    count=v->dimensioncount;
+    for (i=0;i<count;i++){
+       id = vs_getdimensionbyindex(v,i);
+       dim = vs_getvalue(v,id);
+       did = HashToString(id);
+       if (i==0){
+         bestScore=dim->value.floatvalue;
+       }
+       if (dim->value.floatvalue<=bestScore){
+         bestScore=dim->value.floatvalue;
+         bestDim=dim;
+       };
+       free(did);
+    }
+   return bestDim;
+}
+
+
+dimension *vs_highest_dimension( vector *v){
+  char *did;
+  long count,i;
+  float bestScore = -99999; 
+  dimension *dim, *bestDim;
+  t_uuid id;
+    bestDim=NULL;
+    count=v->dimensioncount;
+    for (i=0;i<count;i++){
+       id = vs_getdimensionbyindex(v,i);
+       dim = vs_getvalue(v,id);
+       did = HashToString(id);
+       if (i==0){
+         bestScore=dim->value.floatvalue;
+       }
+       if (dim->value.floatvalue>=bestScore){
+         bestScore=dim->value.floatvalue;
+         bestDim=dim;
+       };
+       free(did);
+    }
+   return bestDim;
+}
 

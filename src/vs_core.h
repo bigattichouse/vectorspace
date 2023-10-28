@@ -59,5 +59,6 @@ void vs_printvector( vector *v);
 void vs_modifyvector( vector *v, float modifier);
 void vs_modifydimension( vector *v, t_uuid id, float modifier);
 
-
+dimension *vs_lowest_dimension( vector *v);
+dimension *vs_highest_dimension( vector *v);
 
