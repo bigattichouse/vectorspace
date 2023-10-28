@@ -4,7 +4,7 @@
 
 extern const long _VS_MAX_DIMS;
 
-typedef int (*vs_stack_fn)(void *, void *, float)  ;
+typedef int (*vs_stack_fn)(void *, void *, int, float)  ;
 
 typedef struct
 {
@@ -13,6 +13,7 @@ typedef struct
   void *context;
   void *stack;
   float value;
+  int store_value;
   void *next;
 } fn_ref; //vs;_value
 
@@ -22,7 +23,8 @@ typedef struct {
 } fn_stack;
 
 fn_stack *fn_stack_create();
-int fn_stack_push(fn_stack *stack, void *context, vs_stack_fn fn, float value);
+int fn_stack_push(fn_stack *stack, void *context, vs_stack_fn fn, int store_value, float value);
 int fn_stack_size(fn_stack *stack);
 fn_ref *fn_stack_pop(fn_stack *stack);
 int fn_stack_exec(fn_stack *stack);
+void fn_stack_clear(fn_stack *stack);

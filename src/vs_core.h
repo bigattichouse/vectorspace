@@ -55,3 +55,9 @@ void vs_clearindex (vector *v);
 void vs_reindex (vector *v);
 
 void vs_printvector( vector *v);
+
+void vs_modifyvector( vector *v, float modifier);
+void vs_modifydimension( vector *v, t_uuid id, float modifier);
+
+
+

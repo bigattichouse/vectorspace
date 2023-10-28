@@ -442,3 +442,34 @@ void vs_mergevectors (vector *movablev,vector *staticv){
   vs_setvalue (movablev,id,value);
  }
 }
+
+
+void vs_modifyvector( vector *v, float modifier){
+  long count,i;
+  float val;
+  dimension *dim;
+  vs_value value;
+  t_uuid id;
+    count=v->dimensioncount;
+    for (i=0;i<count;i++){
+       id = vs_getdimensionbyindex(v,i);
+       dim = vs_getvalue(v,id);
+       val = dim->value.floatvalue;
+       value.floatvalue = val * modifier;
+       vs_setvalue (v,id,value);
+    }
+}
+
+void vs_modifydimension( vector *v, t_uuid id, float modifier){
+  float val;
+  dimension *dim; 
+  vs_value value;
+  dim = vs_getvalue(v,id);
+  if (dim!=NULL){  
+       val = dim->value.floatvalue;
+       value.floatvalue = val * modifier;
+       vs_setvalue (v,id,value);
+  }
+}
+
+
