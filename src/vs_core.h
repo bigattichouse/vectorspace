@@ -41,8 +41,13 @@ dimension *vs_getvalue(vector *v, t_uuid dimensionid); //returns long=0 if value
 t_uuid vs_getdimensionbyindex (vector *v,long idx);
 long vs_clone (vector *src,vector *dst);
 long vs_destroyvector (vector **v);
+
 void vs_mergevectors (vector *movablev,vector *staticv);
 void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight);
+
+void vs_sumvectors (vector *movablev,vector *staticv);
+void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight);
+
 
 float vs_magnitude(vector *v);
 float vs_relativemagnitude(vector *v,vector *ref);

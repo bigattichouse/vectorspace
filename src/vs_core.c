@@ -449,6 +449,47 @@ void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){
 }
 
 
+void vs_sumvectors (vector *movablev,vector *staticv){
+ vs_sumvectorsweighted (vector *movablev,vector *staticv, 1.000000);
+}
+
+void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
+ float mvv,svv;
+ dimension *dim;
+ vs_value value;
+ long i,max;
+ t_uuid id;
+ //Cycle thru and make sure our movable has all necessary dimensions.
+ max = staticv->dimensioncount;
+ for (i=0;i<max;i++){
+  id = vs_getdimensionbyindex(staticv,i);
+  dim = vs_getvalue(movablev,id);
+  if (dim==NULL){
+    value.floatvalue = 0;
+    vs_setvalue (movablev,id,value);
+  }
+ }
+ //now average them!
+ max = movablev->dimensioncount;
+ for (i=0;i<max;i++){
+  id = vs_getdimensionbyindex(movablev,i);
+  dim = vs_getvalue(movablev,id);
+  mvv = 0.00;
+  if (dim!=NULL){
+  mvv = dim->value.floatvalue;
+  }
+  svv=0.00;
+  dim = vs_getvalue(staticv,id);
+  if (dim!=NULL){
+    svv = dim->value.floatvalue * weight;
+  }
+  value.floatvalue =mvv+svv;
+  vs_setvalue (movablev,id,value);
+ }
+}
+
+
+
 void vs_modifyvector( vector *v, float modifier){
   long count,i;
   float val;
