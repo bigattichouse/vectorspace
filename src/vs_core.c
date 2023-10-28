@@ -409,6 +409,11 @@ void vs_printvector( vector *v){
 
 
 void vs_mergevectors (vector *movablev,vector *staticv){
+ vs_mergevectorsweighted (vector *movablev,vector *staticv, 1.000000);
+}
+
+
+void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){
  float mvv,svv;
  dimension *dim;
  vs_value value;
@@ -436,7 +441,7 @@ void vs_mergevectors (vector *movablev,vector *staticv){
   svv=0.00;
   dim = vs_getvalue(staticv,id);
   if (dim!=NULL){
-    svv = dim->value.floatvalue;
+    svv = dim->value.floatvalue * weight;
   }
   value.floatvalue =(mvv+svv)/2;
   vs_setvalue (movablev,id,value);
