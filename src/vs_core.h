@@ -44,10 +44,10 @@ long vs_destroyvector (vector **v);
 
 void vs_mergevectors (vector *movablev,vector *staticv);
 void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight);
+void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float weight, float avg);
 
 void vs_sumvectors (vector *movablev,vector *staticv);
 void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight);
-
 
 float vs_magnitude(vector *v);
 float vs_relativemagnitude(vector *v,vector *ref);

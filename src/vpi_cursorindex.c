@@ -108,16 +108,16 @@ __cdim_node *__cdim_find_dimension_node (__cdim_node *node,t_uuid dimensionid){
 }
 
 
-int __cdim_insertvector (__cdim_index *index, vector *v){
+long __cdim_insertvector (__cdim_index *index, vector *v){
   __cdim_node *found;
-  int max,i,val;
+ long max,i,val;
  int a;
  dimension *dim,*dims;
  max = v->dimensioncount;
  i=0; a=0;
  dims = v->dimensions;
  while (i<max){
-    val = (int)dims + (int)(i * sizeof(dimension));
+    val = (long)dims + (long)(i * sizeof(dimension));
     dim = (dimension *)(val);
     found = __cdim_find_dimension_node(index->root,dim->dimensionid);
     if (index->root==NULL){index->root = found;}
@@ -129,16 +129,15 @@ int __cdim_insertvector (__cdim_index *index, vector *v){
 
 
 
-int __cdim_deletevector (__cdim_index *index, vector *v){
+long __cdim_deletevector (__cdim_index *index, vector *v){
   __cdim_node *found;
-  int max,i,val;
- int a;
+ long max,i,val; 
  dimension *dim,*dims;
  max = v->dimensioncount;
- i=0; a=0;
+ i=0;  
  dims = v->dimensions;
  while (i<max){
-    val = (int)dims + (int)(i * sizeof(dimension));
+    val = (long)dims + (long)(i * sizeof(dimension));
     dim = (dimension *)(val);
     found = __cdim_find_dimension_node(index->root,dim->dimensionid);
     vs_list_erase(found->vectors,v->vectorid);
@@ -185,7 +184,7 @@ vs_list *__cdim_query(vs_cursor *c, vector *v){
   __cdim_node *found;
   __cdim_index *index;
   vs_list *result;
- int max,i,val;
+ long max,i,val;
  dimension *dim,*dims;
  found = NULL;
  if (c->index!=NULL){
@@ -195,7 +194,7 @@ vs_list *__cdim_query(vs_cursor *c, vector *v){
     result = vs_prepare_list(); //indexed.
     dims = v->dimensions;
     while (i<max){
-     val = (int)dims + (int)(i * sizeof(dimension));
+     val = (long)dims + (long)(i * sizeof(dimension));
      dim = (dimension *)(val);
      found = __cdim_find_dimension_node(index->root,dim->dimensionid);
      if (found!=NULL){

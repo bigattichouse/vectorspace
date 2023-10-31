@@ -408,12 +408,7 @@ void vs_printvector( vector *v){
 }
 
 
-void vs_mergevectors (vector *movablev,vector *staticv){
- vs_mergevectorsweighted (vector *movablev,vector *staticv, 1.000000);
-}
-
-
-void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){
+void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float weight, float avg){
  float mvv,svv;
  dimension *dim;
  vs_value value;
@@ -429,6 +424,7 @@ void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){
     vs_setvalue (movablev,id,value);
   }
  }
+  //printf("Merge dimensions:\n");
  //now average them!
  max = movablev->dimensioncount;
  for (i=0;i<max;i++){
@@ -436,22 +432,29 @@ void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){
   dim = vs_getvalue(movablev,id);
   mvv = 0.00;
   if (dim!=NULL){
-  mvv = dim->value.floatvalue;
+     mvv = dim->value.floatvalue;
   }
   svv=0.00;
   dim = vs_getvalue(staticv,id);
   if (dim!=NULL){
     svv = dim->value.floatvalue * weight;
   }
-  value.floatvalue =(mvv+svv)/2;
+  value.floatvalue =(mvv+svv)/avg;
+  //printf("   %ld: %f + (%f * %f) = %f\n",i,svv,mvv,weight, value.floatvalue);
   vs_setvalue (movablev,id,value);
  }
 }
 
 
-void vs_sumvectors (vector *movablev,vector *staticv){
- vs_sumvectorsweighted (vector *movablev,vector *staticv, 1.000000);
+void vs_mergevectorsweighted (vector *movablev,vector *staticv, float weight){ 
+ vs_mergevectorsweightedaveraged (movablev,staticv, 1.000000, 2.0000);
 }
+
+
+void vs_mergevectors (vector *movablev,vector *staticv){
+ vs_mergevectorsweighted (movablev,staticv, 1.000000);
+}
+
 
 void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
  float mvv,svv;
@@ -488,7 +491,9 @@ void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
  }
 }
 
-
+void vs_sumvectors (vector *movablev,vector *staticv){
+ vs_sumvectorsweighted (movablev,staticv, 1.000000);
+}
 
 void vs_modifyvector( vector *v, float modifier){
   long count,i;
@@ -502,6 +507,7 @@ void vs_modifyvector( vector *v, float modifier){
        dim = vs_getvalue(v,id);
        val = dim->value.floatvalue;
        value.floatvalue = val * modifier;
+       //printf(" %f * %f = %f\n",val,modifier,value.floatvalue);
        vs_setvalue (v,id,value);
     }
 }
