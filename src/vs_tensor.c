@@ -29,7 +29,7 @@ vector *vsdb_tensor(vs_cursor *cursor,vector *query,float threshold){
        if(count==0){
           vs_clone (v,output);
        } else {
-          vs_sumvectorsweighted (output,v,dbcos);
+          vs_sumvectorsweighted (output,v,1); //or dbcos? haven't decided, and we average later anyway
       }
       count++;
    }
@@ -41,6 +41,9 @@ vector *vsdb_tensor(vs_cursor *cursor,vector *query,float threshold){
  vsi_destroyrowset(&rowset);
  return(output);
 }
+/*Perhaps if we do an average doc for the bunch, and then a query modified version *dbcos, we could
+use that to create our trjectory. average being the start, modified being the direction we came from, then
+draw a line that distance and find the next point.*/
 
 
 

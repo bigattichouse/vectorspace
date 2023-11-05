@@ -144,6 +144,37 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
       result = 2;
   }
   
+  
+  if (command=='>'){
+                   if (session->mode==CLASSIFIED_VECTOR_MODE){
+                   vst_classify_vector(session->current_vector,thesaurus,session->thesaurus);
+                 }
+
+                 if (session->mode==META_VECTOR_MODE){
+                   temp = vst_metavector(session->current_vector,thesaurus,session->thesaurus);
+                   vs_destroyvector(&session->current_vector);
+                   session->current_vector = temp;
+                 }
+
+     if (logfile) { fprintf(logfile,"Converting Query to Tensor %f\n",value); fflush(logfile); }
+
+      tensor = vsdb_tensor(cursor,session->current_vector,value);
+      vsdb_tensor_remove_query(tensor,session->current_vector,-0.001);
+      
+      vector *output;
+      output = vs_createvector(session->id,0);
+      dimension *dim;
+      dim = vs_highest_dimension(tensor);
+      vs_setvalue (output,dim->dimensionid,dim->value);
+      
+      vs_queued_printvector(session->id, output, output_buffer );
+      
+      vs_destroyvector(&output);
+      vs_destroyvector(&tensor);
+      vs_destroyvector(&session->current_vector);
+      result = 2;
+  }
+  
 
   if (command=='C'){
       did = HashToString(elementid);  // XXXXXXXXXXYYYYYYYYYYZZZZZZZZZZAA
@@ -178,8 +209,8 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
   if (command=='S'){
      //used by the persistor to dump the contents of the cursor
      //persistor then reloads everything using standard V commands.
-      vsdb_outputcursor(session->id,cursor,output_buffer);
-      result = 1;
+     // vsdb_outputcursor(session->id,cursor,output_buffer);
+     // result = 1;
   }
 
 

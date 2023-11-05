@@ -64,28 +64,35 @@ int vp_load_cursor (vs_cursor *cursor, char *filename){
  vector *v;
  t_uuid id;
  vs_value value;
- int count,i,j;
+ int count,i,j,sz;
+ long pos;
  char c;
  i=0;
  j=0;
-
+ pos=0;
  fp = fopen(filename,"rb");
  if (fp){
  fseek ( fp , 0 , SEEK_SET );
  while (!feof(fp)){
   // if (i % 1000 == 0){usleep(20);}  //let's not get completely greedy with the CPU
-   fread(&c,1,1,fp);
+   sz = fread(&c,1,1,fp); pos+=sz;
+   if(sz==1){
    if (c=='V'){
-     fread(&id,sizeof(t_uuid),1,fp);
-     fread(&count,sizeof(int),1,fp);
+     sz = fread(&id,sizeof(t_uuid),1,fp)*sizeof(t_uuid);pos+=sz;
+     sz+= fread(&count,sizeof(int),1,fp)*sizeof(int);pos+=sz;
+     if(sz!=sizeof(t_uuid)+sizeof(int)){
+        printf("Error: Could not read UUID/vector count @ %ld, read %d expected %ld.\n",
+        pos,sz,sizeof(t_uuid)+sizeof(int));exit(1);
+     }
      //printf("%s %d\r\n",HashToString(id),count);
      v=vs_createvector(id,count);
      i=0;  j++;
      //if (j % 100 ==0){printf("%d - %d\r\n",j,count);}
    }
    if (c=='D'){
-     fread(&id,sizeof(t_uuid),1,fp);
-     fread(&value,sizeof(vs_value),1,fp);
+     sz=fread(&id,sizeof(t_uuid),1,fp)*sizeof(t_uuid);pos+=sz;
+     sz+=fread(&value,sizeof(vs_value),1,fp)*sizeof(vs_value);pos+=sz;
+     if(sz!=sizeof(t_uuid)+sizeof(vs_value)){printf("Error: Could not read UUID/dimensions @ %ld.\n",pos);exit(1);}
      vs_setvalue (v, id,value);
      i++;
      //printf("%s %f\r\n",HashToString(id),value.floatvalue);
@@ -93,6 +100,7 @@ int vp_load_cursor (vs_cursor *cursor, char *filename){
         vsc_rawloadvector(cursor,v);
         vs_destroyvector(&v);
      }
+   }
    }
  }
  fclose(fp);
@@ -104,25 +112,30 @@ vector *vp_readvector (FILE *fp){
  vector *v;
  t_uuid id;
  vs_value value;
- int count,i,j;
+ int count,i,j,sz;
+ long pos;
  char c;
  i=0;
  j=0;
+ pos=0;
  v = NULL;
  while (!feof(fp)){
   // if (i % 1000 == 0){usleep(20);}  //let's not get completely greedy with the CPU
-   fread(&c,1,1,fp);
+   sz=fread(&c,1,1,fp);
+   if(sz!=1){printf("Error: Could not read Vector command.\n");exit(1);}
    if (c=='V'){
-     fread(&id,sizeof(t_uuid),1,fp);
-     fread(&count,sizeof(int),1,fp);
+     sz=fread(&id,sizeof(t_uuid),1,fp);
+     sz+=fread(&count,sizeof(int),1,fp);
+     if(sz!=sizeof(t_uuid)+sizeof(int)){printf("Error: Could not read UUID/vector count @ %ld.\n",pos);exit(1);}
     // printf(" %d dimensions\r\n",count);
      v=vs_createvector(id,count);
      i=0;  j++;
      //if (j % 100 ==0){printf("%d - %d\r\n",j,count);}
    }
    if (c=='D'){
-     fread(&id,sizeof(t_uuid),1,fp);
-     fread(&value,sizeof(vs_value),1,fp);
+     sz=fread(&id,sizeof(t_uuid),1,fp);
+     sz+=fread(&value,sizeof(vs_value),1,fp);
+     if(sz!=sizeof(t_uuid)+sizeof(vs_value)){printf("Error: Could not read UUID/dimensions @ %ld.\n",pos);exit(1);}
      vs_setvalue (v, id,value);
      i++;
      if (i==count){
@@ -188,10 +201,10 @@ int vp_load_text_cursor (vs_cursor *cursor, char *filename){
  float value;
  char command;
  char *buffer;
- int count,i,pos;
+ int count,i,pos,sz,vectors;
  char c;
  vs_value val;
- i=0;
+ i=0;vectors=0;
  pos=0; count=0;
  buffer = (char *)malloc(255);
  vectorid = (char *)malloc(32);
@@ -199,7 +212,8 @@ int vp_load_text_cursor (vs_cursor *cursor, char *filename){
  fp = fopen(filename,"r");
  if (fp){
  while (!feof(fp)){
-    fread(&c,1,1,fp);
+    sz=fread(&c,1,1,fp);
+    if(sz!=0){
     buffer[pos]=c;
     pos++;
  //    printf("%s!\n",buffer);
@@ -211,6 +225,8 @@ int vp_load_text_cursor (vs_cursor *cursor, char *filename){
    if (command=='V'){
      v=vs_createvector( id,value);
      count=value;
+     vectors+=1;
+     if(vectors%2500==0){ printf("   %d Vectors loaded.\n",vectors); }
      i=0;
    }
    if (command=='D'){
@@ -227,6 +243,7 @@ int vp_load_text_cursor (vs_cursor *cursor, char *filename){
   memset(buffer,0,255);
 
  }}
+ }
  fclose(fp);
  }
  return(0);

@@ -49,6 +49,9 @@ void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float we
 void vs_sumvectors (vector *movablev,vector *staticv);
 void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight);
 
+void vs_diffvectors (vector *movablev,vector *staticv);
+void vs_diffvectorsweighted (vector *movablev,vector *staticv, float weight);
+
 float vs_magnitude(vector *v);
 float vs_relativemagnitude(vector *v,vector *ref);
 float vs_dotproduct(vector *a,vector *b);
