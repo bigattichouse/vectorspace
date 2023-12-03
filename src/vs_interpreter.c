@@ -20,6 +20,7 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
   vs_value val;
   vs_cursor *cluster;
   vector *temp,*tensor;
+  vector *output;
   char *did,*cCX,*cCY,*cCZ,*cCA;
   int result,min, CX,CY, CZ;
   result = 0;
@@ -161,7 +162,7 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
       tensor = vsdb_tensor(cursor,session->current_vector,value);
       vsdb_tensor_remove_query(tensor,session->current_vector,-0.001);
       
-      vector *output;
+      
       output = vs_createvector(session->id,0);
       dimension *dim;
       dim = vs_highest_dimension(tensor);
@@ -194,6 +195,12 @@ int vsinterpreter_execute (vs_cursor *cursor,vs_cursor *thesaurus,interpreter_se
   vsc_destroycursor(&cluster);
   result=1;
 
+  }
+
+  if (command=='^'){ /*Go find a vector by ID!*/ 
+      output = vsc_findvector (vs_cursor *cursor,t_uuid vectorid)
+      vs_queued_printvector(session->id, output, output_buffer );
+      result = 1;
   }
 
   if (command=='K'){
