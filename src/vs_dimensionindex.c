@@ -144,16 +144,34 @@ __vdim_node *__vdim_recursefind(__vdim_node *tree, t_uuid id) {
   return(NULL); //if we get this far, we haven't found it.
 }
 
+dimension *__vdim_find_dimension_iterative(vector *v, t_uuid dimensionid) {
+    __vdim_index *index = v->index;
+    if (index == NULL) return NULL;
+    
+    __vdim_node *current = index->root;
+    while (current != NULL) {
+        long cmp = CompareGuids(dimensionid, current->id);
+        if (cmp == 0)
+            return current->dim;
+        else if (cmp < 0)
+            current = current->lesser;
+        else
+            current = current->greater;
+    }
+    return NULL;
+}
 
 dimension *__vdim_find_dimension (vector *v,t_uuid dimensionid){
-   __vdim_node *found,*root;
+   //__vdim_node *found,*root;
+   dimension *found;
    __vdim_index *index;
    index = v->index;
    if (index!=NULL){
-   root = (__vdim_node *)(index->root);
-   found =  __vdim_recursefind(root,dimensionid);
+   //root = (__vdim_node *)(index->root);
+   //found =  __vdim_recursefind(root,dimensionid);
+   found = __vdim_find_dimension_iterative(v, dimensionid); //less stack usage than recursive
    if (found!=NULL){
-   return (found->dim);
+   return (found);
    } else {
    return (NULL);
    }
