@@ -71,3 +71,8 @@ void vs_modifydimension( vector *v, t_uuid id, float modifier);
 dimension *vs_lowest_dimension( vector *v);
 dimension *vs_highest_dimension( vector *v);
 
+vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier); 
+
+
+
+

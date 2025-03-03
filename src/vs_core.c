@@ -614,3 +614,57 @@ dimension *vs_highest_dimension( vector *v){
    return bestDim;
 }
 
+//TODO: This was codellama70b, which did a pretty good job.
+vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier){
+   //if you want to ignore mass, use 0 massMultiplier
+    long count, i;
+    dimension *dimA, *dimB;
+    t_uuid id;
+    vs_value valueA, valueB;
+
+    // If both vectors have the same number of dimensions...
+    if (a->dimensioncount == b->dimensioncount) {
+        count = a->dimensioncount;
+
+        for (i = 0; i < count; i++) {
+            id = vs_getdimensionbyindex(a, i);
+            dimA = vs_getvalue(a, id);
+            dimB = vs_getvalue(b, id);
+            
+            // Calculate the distance between the two vectors on each dimension...
+            float distX = (dimA->value.floatvalue - dimB->value.floatvalue);
+            valueA.floatvalue = 1 * dimA->value.floatvalue;
+            valueB.floatvalue = gravity * massMultiplier * distX;
+            
+            // Apply the calculated distance to each vector...
+            vs_setvalue(a, id, valueA);
+            vs_setvalue(b, id, valueB);
+        }
+    }
+    
+    return b;
+}
+
+/*
+vector *vs_gravity(vector *a, vector *b, float gravity, float massMultiplier) {
+    // Calculate the distance between vectors A and B
+    float dx = a->x - b->x;
+    float dy = a->y - b->y;
+    float dz = a->z - b->z;
+    float distanceSquared = dx * dx + dy * dy + dz * dz;
+    float forceMagnitude = (gravity * massMultiplier) / distanceSquared;
+
+    // Calculate the force components on B due to A
+    float fx = forceMagnitude * dx;
+    float fy = forceMagnitude * dy;
+    float fz = forceMagnitude * dz;
+
+    // Update the velocity of B based on the applied force
+    b->vx += fx / b->mass;
+    b->vy += fy / b->mass;
+    b->vz += fz / b->mass;
+
+    return b;
+}
+*/
+
