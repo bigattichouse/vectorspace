@@ -33,7 +33,7 @@ vector *vs_createvector (t_uuid vectorid,long dimensioncount){
     dim = (dimension *)(val);
     dim->dimensionid = NullGuid();
     dim->vectorid=vectorid; dim->dimensiontype=0;
-    dim->value.floatvalue=0;
+    dim->value=0.0;
     }
    return(vp);
 }
@@ -98,7 +98,7 @@ long vs_findemptydimension (vector *v, t_uuid dimensionid){
  return(idx);
 }
 
-long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
+long vs_setvalue (vector *v, t_uuid dimensionid, float value){
  long result,idx,blankidx,val;
  dimension *dim,*dims,*redims;
  result =0;
@@ -128,7 +128,7 @@ long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
     } else {
        val = (long)dims + (long)(sizeof(dimension) * blankidx);
        dim = (dimension *)(val);
- /*     printf("NEW:%s=%f\n",GuidToString(dimensionid),value.floatvalue);*/
+ /*     printf("NEW:%s=%f\n",GuidToString(dimensionid),value);*/
       dim->dimensionid=dimensionid;
       dim->dimensiontype=1;
       dim->value = value;
@@ -138,7 +138,7 @@ long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
   } else {
     val = (long)dims + (long)(idx * sizeof(dimension));
     dim = (dimension *)(val);
-/*      printf("EXIST:%s=%f\n",GuidToString(dimensionid),value.floatvalue);*/
+/*      printf("EXIST:%s=%f\n",GuidToString(dimensionid),value);*/
       dim->dimensiontype=1;
       dim->value = value;
       result=1;
@@ -147,17 +147,15 @@ long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value){
  return(result);
 }
 
-void vs_quickset (vector *v, t_uuid dimensionid,float floatvalue){
- vs_value val;
- val.floatvalue = floatvalue;
- vs_setvalue (v,dimensionid,val);
+void vs_quickset (vector *v, t_uuid dimensionid, float floatvalue){
+ vs_setvalue(v, dimensionid, floatvalue);
 }
 
 
-long vs_appendvalue (vector *v, t_uuid dimensionid,vs_value value){
+long vs_appendvalue (vector *v, t_uuid dimensionid, float value){
  long result,val;
  dimension *dim,*dims,*redims;
- result =0;
+ result = 0;
  dims = v->dimensions;
       /*1. realloc + 1*/
       if ((redims=(dimension *)malloc((v->dimensioncount+1) * sizeof(dimension)))!=NULL){
@@ -183,10 +181,10 @@ long vs_appendvalue (vector *v, t_uuid dimensionid,vs_value value){
 }
 
 
-long vs_setvaluebyindex (vector *v,long idx,t_uuid dimensionid,vs_value value){
+long vs_setvaluebyindex (vector *v, long idx, t_uuid dimensionid, float value){
  long result,val;
  dimension *dim,*dims;
- result =0;
+ result = 0;
  dims = v->dimensions;
  val = (long)dims + (long)(idx * sizeof(dimension));
  dim = (dimension *)(val);
@@ -233,7 +231,7 @@ long vs_clone (vector *src,vector *dst){
 //    val = (long)dims + (long)(i * sizeof(dimension));
     dim = src->dimensions[i];
 //    dim = (dimension *)(val);
-    vs_setvalue(dst,dim.dimensionid,dim.value);
+    vs_setvalue(dst, dim.dimensionid, dim.value);
   }
   return(1);
 }
@@ -264,7 +262,7 @@ float vs_magnitude(vector *v){
    // val = (long)dims + (long)(i * sizeof(dimension));
   //  dim = (dimension *)(val);
   dim = v->dimensions[i];
-  vv = dim.value.floatvalue;
+  vv = dim.value;
   result=result + (vv * vv);
  }
  result = (sqrtf)(result);
@@ -286,10 +284,10 @@ float vs_dotproduct(vector *a,vector *b){
    v1=0.0; v2=0.0;
     val = (long)dims + (long)(i * sizeof(dimension));
     dim = (dimension *)(val);
-   v1 = dim->value.floatvalue;
+   v1 = dim->value;
    dimensionid=dim->dimensionid;
    if((dim2 = vs_getvalue(b,dimensionid))){
-    v2 = dim2->value.floatvalue;
+    v2 = dim2->value;
    } else {v2=0;}
    result=result + (v1 * v2);
  }
@@ -323,7 +321,7 @@ float vs_relativemagnitude(vector *v,vector *ref){
     dimensionid=dim->dimensionid;
     vdim = vs_getvalue (v,dimensionid);
    if (vdim!=NULL){
-      vv = vdim->value.floatvalue;
+      vv = vdim->value;
       result=result + (vv * vv);
    }
  }
@@ -344,8 +342,8 @@ float vs_relativity(vector *v,vector *ref){
     if (dim!=NULL){
     vdim = vs_getvalue (v,dim->dimensionid);
     if(vdim!=NULL){
-      vv = vdim->value.floatvalue;
-      dv = dim->value.floatvalue;
+      vv = vdim->value;
+      dv = dim->value;
       if(vv * dv>0){result+=1;}
     }
     }
@@ -401,7 +399,7 @@ void vs_printvector( vector *v){
        id = vs_getdimensionbyindex(v,i);
        dim = vs_getvalue(v,id);
        did = HashToString(id);
-       printf( "D %s %f\r\n",did,dim->value.floatvalue);
+       printf( "D %s %f\r\n",did,dim->value);
        free(did);
     }
 
@@ -411,7 +409,7 @@ void vs_printvector( vector *v){
 void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float weight, float avg){
  float mvv,svv;
  dimension *dim;
- vs_value value;
+ float value;
  long i,max;
  t_uuid id;
  //Cycle thru and make sure our movable has all necessary dimensions.
@@ -420,7 +418,7 @@ void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float we
   id = vs_getdimensionbyindex(staticv,i);
   dim = vs_getvalue(movablev,id);
   if (dim==NULL){
-    value.floatvalue = 0;
+    value = 0;
     vs_setvalue (movablev,id,value);
   }
  }
@@ -432,15 +430,15 @@ void vs_mergevectorsweightedaveraged (vector *movablev,vector *staticv, float we
   dim = vs_getvalue(movablev,id);
   mvv = 0.00;
   if (dim!=NULL){
-     mvv = dim->value.floatvalue;
+     mvv = dim->value;
   }
   svv=0.00;
   dim = vs_getvalue(staticv,id);
   if (dim!=NULL){
-    svv = dim->value.floatvalue * weight;
+    svv = dim->value * weight;
   }
-  value.floatvalue =(mvv+svv)/avg;
-  //printf("   %ld: %f + (%f * %f) = %f\n",i,svv,mvv,weight, value.floatvalue);
+  value =(mvv+svv)/avg;
+  //printf("   %ld: %f + (%f * %f) = %f\n",i,svv,mvv,weight, value);
   vs_setvalue (movablev,id,value);
  }
 }
@@ -459,7 +457,7 @@ void vs_mergevectors (vector *movablev,vector *staticv){
 void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
  float mvv,svv;
  dimension *dim;
- vs_value value;
+ float value;
  long i,max;
  t_uuid id;
  //Cycle thru and make sure our movable has all necessary dimensions.
@@ -468,7 +466,7 @@ void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
   id = vs_getdimensionbyindex(staticv,i);
   dim = vs_getvalue(movablev,id);
   if (dim==NULL){
-    value.floatvalue = 0;
+    value = 0;
     vs_setvalue (movablev,id,value);
   }
  }
@@ -479,14 +477,14 @@ void vs_sumvectorsweighted (vector *movablev,vector *staticv, float weight){
   dim = vs_getvalue(movablev,id);
   mvv = 0.00;
   if (dim!=NULL){
-  mvv = dim->value.floatvalue;
+  mvv = dim->value;
   }
   svv=0.00;
   dim = vs_getvalue(staticv,id);
   if (dim!=NULL){
-    svv = dim->value.floatvalue * weight;
+    svv = dim->value * weight;
   }
-  value.floatvalue =mvv+svv;
+  value =mvv+svv;
   vs_setvalue (movablev,id,value);
  }
 }
@@ -498,7 +496,7 @@ void vs_sumvectors (vector *movablev,vector *staticv){
 void vs_diffvectorsweighted (vector *movablev,vector *staticv, float weight){
  float mvv,svv;
  dimension *dim;
- vs_value value;
+ float value;
  long i,max;
  t_uuid id;
  //Cycle thru and make sure our movable has all necessary dimensions.
@@ -507,7 +505,7 @@ void vs_diffvectorsweighted (vector *movablev,vector *staticv, float weight){
   id = vs_getdimensionbyindex(staticv,i);
   dim = vs_getvalue(movablev,id);
   if (dim==NULL){
-    value.floatvalue = 0;
+    value = 0;
     vs_setvalue (movablev,id,value);
   }
  }
@@ -518,14 +516,14 @@ void vs_diffvectorsweighted (vector *movablev,vector *staticv, float weight){
   dim = vs_getvalue(movablev,id);
   mvv = 0.00;
   if (dim!=NULL){
-  mvv = dim->value.floatvalue;
+  mvv = dim->value;
   }
   svv=0.00;
   dim = vs_getvalue(staticv,id);
   if (dim!=NULL){
-    svv = dim->value.floatvalue * weight;
+    svv = dim->value * weight;
   }
-  value.floatvalue =svv-mvv;
+  value =svv-mvv;
   vs_setvalue (movablev,id,value);
  }
 }
@@ -540,15 +538,15 @@ void vs_modifyvector( vector *v, float modifier){
   long count,i;
   float val;
   dimension *dim;
-  vs_value value;
+  float value;
   t_uuid id;
     count=v->dimensioncount;
     for (i=0;i<count;i++){
        id = vs_getdimensionbyindex(v,i);
        dim = vs_getvalue(v,id);
-       val = dim->value.floatvalue;
-       value.floatvalue = val * modifier;
-       //printf(" %f * %f = %f\n",val,modifier,value.floatvalue);
+       val = dim->value;
+       value = val * modifier;
+       //printf(" %f * %f = %f\n",val,modifier,value);
        vs_setvalue (v,id,value);
     }
 }
@@ -556,11 +554,11 @@ void vs_modifyvector( vector *v, float modifier){
 void vs_modifydimension( vector *v, t_uuid id, float modifier){
   float val;
   dimension *dim; 
-  vs_value value;
+  float value;
   dim = vs_getvalue(v,id);
   if (dim!=NULL){  
-       val = dim->value.floatvalue;
-       value.floatvalue = val * modifier;
+       val = dim->value;
+       value = val * modifier;
        vs_setvalue (v,id,value);
   }
 }
@@ -578,10 +576,10 @@ dimension *vs_lowest_dimension( vector *v){
        dim = vs_getvalue(v,id);
        did = HashToString(id);
        if (i==0){
-         bestScore=dim->value.floatvalue;
+         bestScore=dim->value;
        }
-       if (dim->value.floatvalue<=bestScore){
-         bestScore=dim->value.floatvalue;
+       if (dim->value<=bestScore){
+         bestScore=dim->value;
          bestDim=dim;
        };
        free(did);
@@ -603,10 +601,10 @@ dimension *vs_highest_dimension( vector *v){
        dim = vs_getvalue(v,id);
        did = HashToString(id);
        if (i==0){
-         bestScore=dim->value.floatvalue;
+         bestScore=dim->value;
        }
-       if (dim->value.floatvalue>=bestScore){
-         bestScore=dim->value.floatvalue;
+       if (dim->value>=bestScore){
+         bestScore=dim->value;
          bestDim=dim;
        };
        free(did);
@@ -620,7 +618,7 @@ vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier){
     long count, i;
     dimension *dimA, *dimB;
     t_uuid id;
-    vs_value valueA, valueB;
+    float valueA, valueB;
 
     // If both vectors have the same number of dimensions...
     if (a->dimensioncount == b->dimensioncount) {
@@ -632,9 +630,9 @@ vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier){
             dimB = vs_getvalue(b, id);
             
             // Calculate the distance between the two vectors on each dimension...
-            float distX = (dimA->value.floatvalue - dimB->value.floatvalue);
-            valueA.floatvalue = 1 * dimA->value.floatvalue;
-            valueB.floatvalue = gravity * massMultiplier * distX;
+            float distX = (dimA->value - dimB->value);
+            valueA = 1 * dimA->value;
+            valueB = gravity * massMultiplier * distX;
             
             // Apply the calculated distance to each vector...
             vs_setvalue(a, id, valueA);
@@ -667,4 +665,3 @@ vector *vs_gravity(vector *a, vector *b, float gravity, float massMultiplier) {
     return b;
 }
 */
-

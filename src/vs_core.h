@@ -6,25 +6,18 @@
 
 extern const long _VS_MAX_DIMS;
 
-typedef struct
-{
-//  t_uuid uniqueidentifier;
-  double  floatvalue;
-//  long    longvalue;
-} vs_value;
-
 typedef struct {
   t_uuid vectorid;  //TODO: <<< IS THIS NEEDED? kinda wasting memory
   t_uuid dimensionid;
   long dimensiontype;
-  vs_value value;
+  float value;  // Replaced vs_value with direct float
 } dimension;
 
 typedef struct {
  t_uuid vectorid;
  long dimensioncount;
  long reference;
- double magnitude;
+ float magnitude;
  void *index;
  dimension *dimensions;
 } vector;
@@ -33,10 +26,10 @@ t_uuid newid();
 vector *vs_createvector (t_uuid vectorid,long dimensioncount);
 long vs_rawfinddimension (vector *v, t_uuid dimensionid);
 long vs_finddimension (vector *v, t_uuid dimensionid);
-long vs_setvalue (vector *v, t_uuid dimensionid,vs_value value);
-void vs_quickset (vector *v, t_uuid dimensionid,float floatvalue);
-long vs_appendvalue (vector *v, t_uuid dimensionid,vs_value value); //if you know we don't have the dim already
-long vs_setvaluebyindex (vector *v,long idx,t_uuid dimensionid,vs_value value);
+long vs_setvalue (vector *v, t_uuid dimensionid, float value);
+void vs_quickset (vector *v, t_uuid dimensionid, float floatvalue);
+long vs_appendvalue (vector *v, t_uuid dimensionid, float value); //if you know we don't have the dim already
+long vs_setvaluebyindex (vector *v,long idx,t_uuid dimensionid, float value);
 dimension *vs_getvalue(vector *v, t_uuid dimensionid); //returns long=0 if value isn't set
 t_uuid vs_getdimensionbyindex (vector *v,long idx);
 long vs_clone (vector *src,vector *dst);
@@ -71,8 +64,4 @@ void vs_modifydimension( vector *v, t_uuid id, float modifier);
 dimension *vs_lowest_dimension( vector *v);
 dimension *vs_highest_dimension( vector *v);
 
-vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier); 
-
-
-
-
+vector *vs_gravity(vector *a,vector* b, float gravity, float massMultiplier);
