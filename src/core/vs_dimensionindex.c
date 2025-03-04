@@ -161,14 +161,32 @@ dimension *__vdim_find_dimension_iterative(vector *v, t_uuid dimensionid) {
     return NULL;
 }
 
-dimension *__vdim_find_dimension (vector *v,t_uuid dimensionid){
-   //__vdim_node *found,*root;
+long __vdim_find_dimension_iterative_index (vector *v, t_uuid dimensionid) {
+    __vdim_index *index = v->index;
+    if (index == NULL) return -1;
+    __vdim_node *current = index->root;
+    long  pos = 0;
+    while (current != NULL) {
+        long cmp = CompareGuids(dimensionid, current->id);
+        if (cmp == 0)
+            return pos;
+        else {
+                pos+=1;
+                if (cmp < 0) {
+                    current = current->lesser;
+                } else {
+                    current = current->greater;
+                }
+            }
+    }
+    return -1;
+}
+
+dimension *__vdim_find_dimension (vector *v,t_uuid dimensionid){ 
    dimension *found;
    __vdim_index *index;
    index = v->index;
-   if (index!=NULL){
-   //root = (__vdim_node *)(index->root);
-   //found =  __vdim_recursefind(root,dimensionid);
+   if (index!=NULL){ 
    found = __vdim_find_dimension_iterative(v, dimensionid); //less stack usage than recursive
    if (found!=NULL){
    return (found);
@@ -178,17 +196,10 @@ dimension *__vdim_find_dimension (vector *v,t_uuid dimensionid){
    } else return(NULL);
 }
 
-long __vdim_find (vector *v,t_uuid dimensionid){
-   __vdim_node *found,*root;
+long __vdim_find (vector *v,t_uuid dimensionid){ 
    __vdim_index *index;
    index = v->index;
-   if (index!=NULL){
-   root = (__vdim_node *)(index->root);
-   found =  __vdim_recursefind( root,dimensionid);
-   if (found!=NULL){
-   return (found->position);
-   } else {
-   return (-1);
+   if (index!=NULL){ 
+    return __vdim_find_dimension_iterative_index(v, dimensionid); //less stack usage than recursive
    }
-   } else return(-1);
 }
