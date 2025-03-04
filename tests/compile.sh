@@ -1,2 +1,2 @@
-gcc -o vs_test -I../src/ vs_test.c ../src/uuid.c ../src/vs_core.c ../src/vs_dimensionindex.c -lm -lpthread -lcrypto
+gcc -o vs_test -I../src/core/ vs_test.c ../src/core/uuid.c ../src/core/vs_core.c ../src/core/vs_dimensionindex.c -lm -lpthread -lcrypto
 
